@@ -1,6 +1,6 @@
 # What it does:
 It's an attendance system where students can mark their attendance for the subjects whose portal is opened by the teacher.
-Teacher then closes portal, verifies attendance and uploads it. Teacher can also reopen the portal or cancel the attendance taken.
+Teacher then closes portal, verifies attendance and uploads it. Teacher can also reopen the portal or cancel the attendance taken before it is uploaded, once attendance is uploaded it can't be modified.
 Students can view their attendance subject-wise.
 Teachers can view attendance of the subjects they are assigned and generate it's PDF.
 
