@@ -4,7 +4,7 @@ Teacher then closes portal, verifies attendance and uploads it. Teacher can also
 Students can view their attendance subject-wise.
 Teachers can view attendance of the subjects they are assigned and generate it's PDF.
 
-It consists of 3 users: Admin, Teacher and Student
+It consists of 3 users: Admin, Teacher and Student.
 After a teacher or a student registers, their data is added to database but their account is not activated.
 A non-activated user cannot use the functionality provided on Dashboard.
 
