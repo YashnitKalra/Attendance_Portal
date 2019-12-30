@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot Username{% endblock %}
+
+{% block heading %}Forgot Username <a href="/" class="btn btn-outline-light float-right">Return</a>{% endblock %}
+
+{% block content %}
+    {% for message in messages %}
+        <h3 class="text-primary m-0 table-primary px-3">{{message}}</h3>
+    {% endfor %}
+    <form method="POST" class="mx-3 mt-5">
+        {% csrf_token %}
+        <div class="input-group">
+            <input type="email" name="email" required class="form-control" placeholder="Enter Email">
+            <div class="input-group-append">    
+                <input type='submit' value="Submit" class="btn btn-dark">
+            </div>
+        </div>
+    </form>
+{% endblock %}

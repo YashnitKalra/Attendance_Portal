@@ -1,0 +1,199 @@
+{% extends 'base.html'%}
+
+{% block title %}
+    Subjects ({{Name}})
+{% endblock%}
+
+{% block heading %}
+    Edit Subjects
+{% endblock %}
+
+{% block sub-heading %}
+    Teacher: {{Name}}<br>
+    Course: {{Course}}
+{% endblock %}
+
+{% block content %}
+<div class="text-right mr-3">
+    <a href=".." class="btn btn-outline-dark">Return</a>
+</div>
+<div class="container-fluid">
+    <div class="row my-5">
+        <div class="col-sm-12 text-center">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="button" class="btn btn-outline-dark btn-block btn-lg p-5" id='add'>Add<br>Subject</button>
+            </form>
+        </div>
+    </div>
+    <div class="row my-5 h-100">
+        <div class="col-sm-12 text-center">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="button" class="btn btn-outline-dark btn-block btn-lg p-5" id='remove'>Remove<br>Subject</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class='modal fade' id="addModal">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-light">
+                <h4 class="modal-title">Add Subject</h4>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <label>Subjects left to be assigned in course {{Course}}:</label>
+                    <select class="custom-select" name="subject" id="subjects1">
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" id="addSubjectButton">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class='modal fade' id="removeModal">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-light">
+                <h4 class="modal-title">Remove Subject</h4>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form method="POST" action="/admin/home/teacher/editSubjects/removeSubject">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <label>Subjects taught by {{Name}}:</label>
+                    <select class="custom-select" name="subject" id="subjects2">
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" id="removeSubjectButton">Remove</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        let loading="<div class='spinner-border spinner-border-sm mb-1'></div>";
+        csrf=$('[name=csrfmiddlewaretoken]')[0].value;
+
+        $("#add").click(function(){
+            let html=$(this).html();
+            $(this).prop('disabled',true);
+            $("#remove").prop('disabled',true);
+            $(this).html(html+" "+loading);
+            $.ajax({
+                url: "/admin/home/teacher/editSubjects/leftSubjects",
+                type: "POST",
+                data:{
+                    Course: '{{Course}}',
+                    csrfmiddlewaretoken: csrf
+                },
+                success: function(result){
+                    data=JSON.parse(result);
+                    subjects=data.subjects;
+                    let subSelects=document.getElementById("subjects1");
+                    $(subSelects).empty();
+                    $(subjects).each(function(i,e){
+                        let opt = document.createElement('option');
+                        opt.value = e;
+                        opt.innerHTML = e;
+                        subSelects.appendChild(opt);
+                    });
+                    $("#add").html(html);
+                    $("#add").prop('disabled',false);
+                    $("#remove").prop('disabled',false);
+                    $("#addModal").modal("show");
+                }
+            });
+        });
+
+        $("#remove").click(function(){
+            let html=$(this).html();
+            $(this).prop('disabled',true);
+            $("#add").prop('disabled',true);
+            $(this).html(html+" "+loading);
+            $.ajax({
+                url: "/admin/home/teacher/editSubjects/teacherSubjects",
+                type: "POST",
+                data:{
+                    Teacher_Id: "{{Teacher_Id}}",
+                    csrfmiddlewaretoken: csrf
+                },
+                success: function(result){
+                    data=JSON.parse(result);
+                    subjects=data.subjects;
+                    let subSelects=document.getElementById("subjects2");
+                    $(subSelects).empty();
+                    $(subjects).each(function(i,e){
+                        let opt = document.createElement('option');
+                        opt.value = e;
+                        opt.innerHTML = e;
+                        subSelects.appendChild(opt);
+                    });
+                    $("#remove").html(html);
+                    $("#remove").prop('disabled',false);
+                    $("#add").prop('disabled',false);
+                    $("#removeModal").modal("show");
+                }
+            });
+        });
+
+        $("#addSubjectButton").click(function(){
+            let html=$(this).html();
+            $(this).prop('disabled',true);
+            $("#subjects1").prop('disabled',true);
+            $(this).html(html+" "+loading);
+            $.ajax({
+                url: "/admin/home/teacher/editSubjects/addSubject",
+                type: "POST",
+                data:{
+                    Teacher_Id: "{{Teacher_Id}}",
+                    Course: "{{Course}}",
+                    Subject: $("#subjects1").val(),
+                    csrfmiddlewaretoken: csrf
+                },
+                success: function(result){
+                    alert(result);
+                    $("#addSubjectButton").html(html);
+                    $("#addSubjectButton").prop('disabled',false);
+                    $("#subjects1").prop('disabled',false);
+                    $("#addModal").modal("hide");
+                }
+            });
+        });
+
+        $("#removeSubjectButton").click(function(){
+            let html=$(this).html();
+            $(this).prop('disabled',true);
+            $("#subjects2").prop('disabled',true);
+            $(this).html(html+" "+loading);
+            $.ajax({
+                url: "/admin/home/teacher/editSubjects/removeSubject",
+                type: "POST",
+                data:{
+                    Teacher_Id: "{{Teacher_Id}}",
+                    Subject: $("#subjects2").val(),
+                    csrfmiddlewaretoken: csrf
+                },
+                success: function(result){
+                    alert(result);
+                    $("#removeSubjectButton").html(html);
+                    $("#removeSubjectButton").prop('disabled',false);
+                    $("#subjects2").prop('disabled',false);
+                    $("#removeModal").modal("hide");
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

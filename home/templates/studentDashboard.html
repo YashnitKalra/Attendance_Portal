@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Dashboard: Student
+{% endblock %}
+
+{% block heading %}
+    Welcome {{request.session.name}}
+{% endblock %}
+
+{% block sub-heading %}
+    Student's Dashboard
+{% endblock %}
+    
+    {% block content %}
+    {% csrf_token %}
+    <div class="text-right mt-2 mx-3">
+        <button type="button" class="btn btn-outline-dark" data-toggle='modal' data-target='#changePasswordModal'>
+            Change Password
+        </button>
+        <a href="logout" class="btn btn-outline-dark">Logout</a>
+    </div>
+    {% if request.session.userActive %}
+        <!--Student dashboard content-->
+        <div class="container-fluid">
+            <div class="row my-5">
+                <div class="col-sm-12 text-center">
+                    <button type="button" class="btn btn-outline-dark btn-block btn-lg p-5" data-backdrop="static"
+                    id="markAttendanceButton">
+                        Mark<br>Attendance
+                    </button>
+                </div>
+            </div>
+            <div class="row my-5 h-100">
+                <div class="col-sm-12 text-center">
+                    <a href='/checkStudentAttendance' class="btn btn-outline-dark btn-block btn-lg p-5">Check<br>Attendance</a>
+                </div>
+            </div>
+        </div>
+
+        <!--Change Passoword Modal-->
+        <div class='modal fade' id="changePasswordModal">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h4 class="modal-title">Change Password</h4>
+                        <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="password" placeholder="Old Password" id="oldPassword" class="form-control mb-3">
+                        <input type='password' placeholder="New Password" id="password1" class="form-control mb-3">
+                        <input type='password' placeholder="Confirm New Password" id="password2" class="form-control mb-3">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" id="changePassword">Change Password</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Mark Attendance Modal-->
+        <div class='modal fade' id="markAttendanceModal" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h4 class="modal-title">Mark Attendance</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class='table' id="markAttendanceBody"></table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal" id='closeButton'>Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function(){
+                let loading="<div class='spinner-border spinner-border-sm mb-1'></div>";
+                csrf=$('[name=csrfmiddlewaretoken]')[0].value;
+                function disable(e){$(e).prop('disabled',true);}
+                function enable(e){$(e).prop('disabled',false);}
+
+                function mark_attendance(){
+                    $(".mark").each((i,e)=>{disable(e)});
+                    disable("#closeButton");
+                    let id=$(this).prop('id');
+                    let html=$(this).html();
+                    $(this).html(html+" "+loading);
+                    $.ajax({
+                        url: "/markAttendance",
+                        type: "POST",
+                        data:{
+                            Teacher_Id: id,
+                            Student_Id: "{{request.session.id}}",
+                            Student_Name: "{{request.session.name}}",
+                            csrfmiddlewaretoken: csrf
+                        },
+                        success: function(result){
+                            if(result!=="Error"){
+                                alert(result);
+                                $(".mark").each((i,e)=>{enable(e)});
+                                $("#"+id).html('Marked &#10003');
+                                $("#"+id).prop('disabled',true);
+                                $("#"+id).off('click');
+                                $("#"+id).removeClass('mark');
+                            }
+                            else{ 
+                                alert(result);
+                                $("#"+id).html(html);
+                                $("#markAttendanceModal").modal('hide');
+                            }
+                            enable("#closeButton");
+                        }
+                    });  
+                    
+                }
+
+                // Ajax requests on button click
+                $("#changePassword").click(function(){
+                    disable(this)
+                    html=$(this).html();
+                    $(this).html(html+" "+loading);
+                    $.ajax({
+                        url: "/changePassword",
+                        type: "POST",
+                        data:{
+                            oldPassword: $("#oldPassword").val(),
+                            password1: $("#password1").val(),
+                            password2: $("#password2").val(),
+                            csrfmiddlewaretoken: csrf
+                        },
+                        success: function(result){
+                            alert(result);
+                            enable("#changePassword");
+                            $("#changePassword").html(html);
+                            if(result==="Successful"){
+                                $("#changePasswordModal").modal('hide');
+                                $("#oldPassword").val(""); $("#password1").val(""); $("#password2").val("");
+                            }
+                        }
+                    });
+                });
+
+                $("#markAttendanceButton").click(function(){
+                    disable(this)
+                    html=$(this).html();
+                    $(this).html(html+" "+loading);
+                    $("#markAttendanceBody").empty()
+                    $.ajax({
+                        url: "/getStudentPortals",
+                        type: "POST",
+                        data:{
+                            Course: '{{request.session.course}}',
+                            Section: '{{request.session.section}}',
+                            Student_Id: "{{request.session.id}}",
+                            csrfmiddlewaretoken: csrf
+                        },
+                        success: function(result){
+                            if(result!=="Error"){
+                                result=JSON.parse(result);
+                                for(key in result){
+                                    row='<tr><td class="text-center font-italic font-weight-bold">'+result[key][0]+
+                                        '</td><td class="text-right">';
+                                    if(result[key][1])
+                                        row+='<button class="btn btn-success" id="'+key+'" disabled>Marked &#10003';
+                                    else
+                                        row+='<button class="btn btn-success mark" id="'+key+'">Mark Attendance';
+                                    row+='</button></td></tr>';  
+                                    $("#markAttendanceBody").append(row);
+                                }
+                                $(".mark").on('click',mark_attendance);
+                                $("#markAttendanceModal").modal('show');
+                            }else alert(result);
+                            enable("#markAttendanceButton");
+                            $("#markAttendanceButton").html(html);
+                        }
+                    });
+                });
+            });
+        </script>
+    {% else %}
+        <h2 class="text-center mt-5 text-danger">Account not activated<br>Please contact the Admin</h2>
+    {% endif %}
+{% endblock %}

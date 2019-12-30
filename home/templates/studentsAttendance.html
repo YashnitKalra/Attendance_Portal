@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance ({{name}}){% endblock %}
+
+{% block heading %}{{name}} <a href="/teacherDashboard" class="btn btn-outline-light float-right">Return</a>{% endblock %}
+
+{% block sub-heading %}Student's Attendance{% endblock %}
+
+{% block content %}
+    <div class="input-group p-2">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Subject</span>
+        </div>
+        {% csrf_token %}
+        <select id='subject' class='custom-select'>
+            {% for subject in subjects %}
+                <option value="{{subject}}">{{subject}}</option>
+            {% endfor %}
+        </select>
+
+        <div class="input-group-prepend">
+            <span class="input-group-text">Section</span>
+        </div>
+        <select id='section' class='custom-select'>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+        </select>
+        <div class='input-group-append'>
+            <button type='button' id='getAttendance' class='btn btn-dark p-1'>View</button> 
+        </div>
+    </div>
+    <div class="fluid-container px-2"><table class='table table-primary table-bordered text-center' id='attendance'></table></div>
+
+    <script>
+        let loading="<div class='spinner-border spinner-border-sm mb-1'></div>";
+        let csrf=$('[name=csrfmiddlewaretoken]')[0].value;
+        let months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        function disable(e){$(e).prop('disabled',true);}
+        function enable(e){$(e).prop('disabled',false);}
+
+        $("#getAttendance").click(function(){
+            disable(this);
+            disable("#subject");
+            disable("#section");
+            html=$(this).html();
+            $(this).html(html+" "+loading);
+            $("#attendance").empty()
+            $.ajax({
+                url: "/getAttendances",
+                type: "POST",
+                data:{
+                    subject: $("#subject").val(),
+                    section: $("#section").val(),
+                    csrfmiddlewaretoken: csrf
+                },
+                success: function(result){
+                    if(result!=="Error"){
+                        let=subject=$("#subject").val(),section=$("#section").val(),students=[];
+                        data=JSON.parse(result);
+                        let total=data['total'];
+                        let ids=Object.keys(data['students']);
+                        ids.sort((e1,e2)=>{
+                            return parseInt(e1)-parseInt(e2);
+                        });
+                        append=`<tr><th colspan='4'>Subject: ${$("#subject").val()}, Section: ${$("#section").val()} `+
+                            `<form method="POST" action="/generatePDF" id='pdfForm' class="d-inline float-right" target="_blank">`+
+                            `</form></th></tr>`;
+                        append+="<tr><th>ID</th><th>Student</th><th>Attended</th><th>Total</th></tr>";
+                        $(ids).each((i,e)=>{
+                            name=data['students'][e][0];
+                            attended=data['students'][e][1];
+                            append+=`<tr class="bg-light"><td>${e}</td><td>${name}</td><td>${attended}</td><td>${total}</td></tr>`;
+                            students.push([e,name,attended,total]);
+                        });
+                        $('#attendance').append(append);
+                        $("#pdfForm").empty();
+                        students=students.toString().replace(/\s/g,"_");
+                        $("#pdfForm").append(
+                            `<input type="hidden" value=${csrf} name="csrfmiddlewaretoken">`+
+                            `<input type="hidden" name="subject" value=${subject}>`+
+                            `<input type="hidden" name="section" value=${section}>`+
+                            `<input type="hidden" name="students" value=${students}>`+
+                            `<input type="submit" value="Generate PDF" class="btn btn-sm btn-dark">`
+                        );
+                        $("td,th").addClass("align-middle");
+                    }else alert(result);
+                    enable("#getAttendance");
+                    enable("#subject");
+                    enable("#section");
+                    $("#getAttendance").html(html);
+                }
+            });
+        });
+    </script>
+{% endblock %}

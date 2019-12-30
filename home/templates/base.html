@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'attendance.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body class="bg-light text-dark">
+    <div class="bg-dark text-light container-fluid mb-0">
+        <h1 class="pl-3 pt-3 pb-0 mb-0 heading">
+            {% block heading %}{% endblock %}
+        </h1>
+        <h6 class="pl-3 pb-3 m-0 sub-heading">
+            {% block sub-heading %}{% endblock %}
+        </h6>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+    <div style="margin-bottom: 100px;"></div>
+    <div class="footer bg-dark w-100 p-3">
+       - By Yashnit Kalra
+    </div>
+</body>
+</html>
+{% block script %}
+{% endblock %}

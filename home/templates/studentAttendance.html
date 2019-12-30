@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance ({{name}}){% endblock %}
+
+{% block heading %}{{name}} <a href="/studentDashboard" class="btn btn-outline-light float-right">Return</a>{% endblock %}
+
+{% block sub-heading %}Attendance{% endblock %}
+
+{% block content %}
+    <div class="input-group p-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Subject: </span>
+        </div>
+        {% csrf_token %}
+        <select id='subject' class='custom-select'>
+            <option value="all">All</option>
+            {% for subject in subjects %}
+                <option value="{{subject}}">{{subject}}</option>
+            {% endfor %}
+        </select>
+        <div class='input-group-append'>
+            <button type='button' id='getAttendance' class='btn btn-dark'>View</button> 
+        </div>
+    </div>
+    <div class="fluid-container px-3"><table class='table table-primary table-bordered text-center' id='attendance'></table></div>
+
+    <script>
+        let loading="<div class='spinner-border spinner-border-sm mb-1'></div>";
+        let csrf=$('[name=csrfmiddlewaretoken]')[0].value;
+        let months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        function disable(e){$(e).prop('disabled',true);}
+        function enable(e){$(e).prop('disabled',false);}
+
+        $("#getAttendance").click(function(){
+            disable(this)
+            html=$(this).html();
+            $(this).html(html+" "+loading);
+            $("#attendance").empty()
+            $.ajax({
+                url: "/getAttendance",
+                type: "POST",
+                data:{
+                    subject: $("#subject").val(),
+                    csrfmiddlewaretoken: csrf
+                },
+                success: function(result){
+                    if(result!=="Error"){
+                        subjects=JSON.parse(result).subjects;
+                        data="<tr><th>Subject</th><th>Month</th><th>Attended</th><th>Total</th></tr>";
+                        for(subject in subjects){
+                            data+="<tr><th rowspan='"+(Object.keys(subjects[subject]['total']).length+1)+"' class='align-middle'>"+
+                                subject+"</th></tr>";
+                            $(months).each((i,month)=>{
+                                if(month in subjects[subject]['total']){
+                                    data+="<tr class='bg-light'><td>"+month+"</td><td>";
+                                    if(month in subjects[subject]['attended'])
+                                        data+=subjects[subject]['attended'][month];
+                                    else
+                                        data+=0;
+                                    data+="</td><td>"+subjects[subject]['total'][month]+"</td></tr>";
+                                }
+                            });
+                        }
+                        $('#attendance').append(data);
+                        $("td,th").addClass("align-middle");
+                    }else alert(result);
+                    enable("#getAttendance");
+                    $("#getAttendance").html(html);
+                }
+            });
+        });
+    </script>
+{% endblock %}

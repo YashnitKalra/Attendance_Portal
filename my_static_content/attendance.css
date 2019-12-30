@@ -1,0 +1,26 @@
+.heading{
+    font-size: 4vw;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.sub-heading{
+    font-size: 2vw;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-style: italic;
+}
+
+.footer{
+    bottom: 0;
+    position: fixed;
+    color: lightgray;
+    text-align: right;
+}
+
+@media screen and (max-width:575.5px){
+    .heading{
+        font-size: 8vw;
+    }
+    .sub-heading{
+        font-size: 4vw;
+    }
+}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Verification{% endblock %}
+
+{% block heading %}
+    Registration
+{% endblock %}
+
+{% block sub-heading %}
+    OTP Verification
+{% endblock %}
+
+{% block content%}
+    <form action="/register" method="POST" class="p-3">
+        {% csrf_token %}
+        <input type='hidden' name="firstname" value="{{firstname}}">
+        <input type='hidden' name='lastname' value='{{lastname}}'>
+        <input type='hidden' name="username" value="{{username}}">
+        <input type='hidden' name='password' value="{{password}}">
+        <input type='hidden' name='email' value="{{email}}">
+        <input type='hidden' name='token' value="{{otp}}">
+        <input type='hidden' name="course" value="{{course}}">
+        <input type='hidden' name='userType' value="{{userType}}">
+        {% if userType == "student" %}
+            <input type='hidden' name='semester' value="{{semester}}">
+            <input type='hidden' name='section' value="{{section}}">
+            <input type='hidden' name='dob' value="{{dob}}">
+        {% endif %}
+        <label>Enter OTP sent to <b>{{email}}</b>:</label>
+        <input type="number" name="otp" required class="form-control mb-3">
+        <input type="submit" value="Submit" class="btn btn-dark">    
+    </form>
+{% endblock %}
