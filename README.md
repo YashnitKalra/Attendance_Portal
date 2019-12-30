@@ -18,30 +18,32 @@ A non-activated user cannot use the functionality provided on Dashboard.
 Django, jQuery, JavaScript, Bootstrap 4, CSS, HTML, PostgreSQL
 
 # Some Snapshots:
+Home Page:
 ![](/snapshots/1.jpg)
-
 ![](/snapshots/2.jpg)
-
 ![](/snapshots/3.jpg)
-
 ![](/snapshots/4.jpg)
-
 ![](/snapshots/5.jpg)
 
+Activating and Assigning Subject to teacher:
 ![](/snapshots/6.jpg)
-
 ![](/snapshots/7.jpg)
 
+Opening Portal for Subject "Python"
 ![](/snapshots/8.jpg)
 
+Student Marking Subject for "Python"
 ![](/snapshots/9.jpg)
-
 ![](/snapshots/10.jpg)
 
+Closing Portal:
 ![](/snapshots/11.jpg)
 
+Uploading Attendance:
 ![](/snapshots/12.jpg)
 
+Teacher's Attendance Report
 ![](/snapshots/13.jpg)
 
+Student Attendance:
 ![](/snapshots/14.jpg)
