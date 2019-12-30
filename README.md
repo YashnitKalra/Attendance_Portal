@@ -10,9 +10,9 @@ A non-activated user cannot use the functionality provided on Dashboard.
 
 # Admin Role:
 1. He/She activates the user account.
-2. He/She can add new courses and subjects to that courses or edit them.
+2. He/She can add new courses and subjects to a course or edit them.
 3. He/She assigns subjects to a teacher.
-4. He/She has access to most of the data presesnt in Database.
+4. He/She has access to most of the data present in Database.
 
 # Made Using:
-Django, jQuery, JavaScript, BootStrap 4, CSS, HTML, PostgreSQL
+Django, jQuery, JavaScript, Bootstrap 4, CSS, HTML, PostgreSQL
