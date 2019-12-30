@@ -13,3 +13,6 @@ A non-activated user cannot use the functionality provided on Dashboard.
 2. He/She can add new courses and subjects to that courses or edit them.
 3. He/She assigns subjects to a teacher.
 4. He/She has access to most of the data presesnt in Database.
+
+# Made Using:
+Django, jQuery, JavaScript, BootStrap 4, CSS, HTML, PostgreSQL
