@@ -32,7 +32,7 @@ Activating and Assigning Subject to teacher:
 Opening Portal for Subject "Python"
 ![](/snapshots/8.jpg)
 
-Student Marking Subject for "Python"
+Student Marking Attendance for "Python"
 ![](/snapshots/9.jpg)
 ![](/snapshots/10.jpg)
 
