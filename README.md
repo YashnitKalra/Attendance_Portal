@@ -16,3 +16,6 @@ A non-activated user cannot use the functionality provided on Dashboard.
 
 # Made Using:
 Django, jQuery, JavaScript, Bootstrap 4, CSS, HTML, PostgreSQL
+
+# Some Snapshots:
+![](/snapshots/1.jpg)
