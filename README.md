@@ -19,3 +19,16 @@ Django, jQuery, JavaScript, Bootstrap 4, CSS, HTML, PostgreSQL
 
 # Some Snapshots:
 ![](/snapshots/1.jpg)
+![](/snapshots/2.jpg)
+![](/snapshots/3.jpg)
+![](/snapshots/4.jpg)
+![](/snapshots/5.jpg)
+![](/snapshots/6.jpg)
+![](/snapshots/7.jpg)
+![](/snapshots/8.jpg)
+![](/snapshots/9.jpg)
+![](/snapshots/10.jpg)
+![](/snapshots/11.jpg)
+![](/snapshots/12.jpg)
+![](/snapshots/13.jpg)
+![](/snapshots/14.jpg)
